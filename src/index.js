@@ -19,6 +19,11 @@ loop(async function main () {
         config.imageTag
     )
 
+    if (!image) {
+        console.error(`No images found with tag "${config.imageTag}"`)
+        return
+    }
+
     // Get a tag which isn't the same as `imageTag`
     const tag = image.imageTags.find((tag) => tag !== config.imageTag)
     if (!tag) {

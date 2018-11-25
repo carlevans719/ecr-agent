@@ -50,6 +50,14 @@ module.exports = class EcrApi {
      * @returns {AWS.ECR.ImageDetail}
      */
     getImageByTag (images, imageTag) {
-        return images.find((image) => image.imageTags.includes(imageTag))
+        return images.find((image) => {
+            if (!image || !image.imageTags || !Array.isArray(image.imageTags)) {
+                console.warn(`[getImageByTag] -- Image was undefined or missing tags: ${image}`)
+
+                return false
+            }
+
+            return image.imageTags.includes(imageTag)
+        })
     }
 }
