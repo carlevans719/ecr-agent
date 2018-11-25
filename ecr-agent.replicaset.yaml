@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: ecr-agent
+  labels:
+    app: ecr-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecr-agent
+  template:
+    metadata:
+      labels:
+        app: ecr-agent
+    spec:
+      containers:
+      - name: agent
+        image: carlevans719/ecr-agent:latest
+        resources:
+          requests:
+            memory: 50Mi
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          value: ''
+        - name: AWS_SECRET_ACCESS_KEY
+          value: ''
+        - name: AWS_REGION
+          value: ''
+        - name: K8S_CLUSTER_NAME
+          value: ''
+        - name: K8S_KUBECONFIG
+          value: ''
+        - name: INTERVAL
+          value: ''
+        - name: IMAGE_TAG
+          value: ''
+        - name: ECR_REPOSITORY
+          value: ''
+        - name: RESOURCE_TYPE
+          value: ''
+        - name: RESOURCE_NAME
+          value: ''

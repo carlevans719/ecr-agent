@@ -1,0 +1,13 @@
+.vscode
+.rules
+.danger
+.scripts
+vendor
+node_modules
+test
+typings
+.git
+**/*.tests.js
+**/*.app-test.js
+public
+packages
