@@ -2,7 +2,31 @@
 
 This agent will update the specified Deployment / StatefulSet when it detects a new version of the image which they use has been pushed to ECR.
 
-It does this by polling ECR every `INTERVAL` milliseconds to see if an image has been pushed with a specified tag.
+## Problem
+
+![CI process using Codebuild and ECR](assets/ECR_AGENT.png)
+
+1. The developer pushes their code to GitHub
+1. Github sends a webhook to Codebuild
+1. The Codebuild project builds the Docker image
+1. The Codebuild project pushes the Docker image to an ECR repository
+1. ?? How to tell Kubernetes cluster to update the tags in the Deployment/StatefulSet manifest ??
+
+## Solution
+
+![CI process using Codebuild and ECR with ECR Agent](assets/ECR_AGENT_SOLUTION.png)
+
+1. The developer pushes their code to GitHub
+1. Github sends a webhook to Codebuild
+1. The Codebuild project builds the Docker image
+1. The Codebuild project pushes the Docker image to an ECR repository
+1. The ECR Agent running in the Kubernetes cluster polls ECR
+    1. When a new image is detected, the agent will update the manifest of the Deployment/StatefulSet
+    1. Kubernetes will handle deploying the new pods and removing the old ones
+
+## How It Works
+
+It works by polling ECR every `INTERVAL` milliseconds to see if an image has been pushed with a specified tag.
 
 The idea is that your CI pipeline will build the Docker image and tag it with a unique version number and push it to ECR, then it will tag it with "production" (or whatever `IMAGE_TAG` is set to) and pushing that tag to ECR too.
 
@@ -21,7 +45,9 @@ The agent will then read the "production" image, find the other tag (for example
 
 First build the image:
 
-`docker build . -t ecr-agent:latest`
+```shell
+docker build . -t ecr-agent:latest
+```
 
 Next run the image
 
@@ -46,4 +72,7 @@ node bundle.js
 Edit the environment variable values in `./ecr-agent.replicaset.yaml`. Optionally specify your own hosted image.
 
 Then create the ReplicaSet resource:
-`kubectl apply -f ecr-agent.replicaset.yaml`
+
+```shell
+kubectl apply -f ecr-agent.replicaset.yaml
+```
